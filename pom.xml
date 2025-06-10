@@ -38,24 +38,20 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/lib</directory>
+                <targetPath>lib/</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
-                            <includeScope>runtime</includeScope>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -64,17 +60,18 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>install-jar</id>
+                        <id>install-game-engine</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>lib/desktop-game-engine.jar</file>
                             <groupId>com.javarush</groupId>
                             <artifactId>desktop-game-engine</artifactId>
                             <version>1.0</version>
+                            <file>lib/desktop-game-engine.jar</file>
                             <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
                         </configuration>
                     </execution>
                 </executions>
@@ -87,8 +84,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</mainClass>
                             <addClasspath>true</addClasspath>
+                            <mainClass>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                         <manifestEntries>
@@ -99,14 +96,22 @@
                 </configuration>
             </plugin>
 
-            <!-- Usual compilation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                    <includeScope>compile</includeScope>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
